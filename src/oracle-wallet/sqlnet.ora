@@ -1,0 +1,2 @@
+WALLET_LOCATION = (SOURCE = (METHOD = file) (METHOD_DATA = (DIRECTORY="C:\\Users\\johnn\\Desktop\\430-project\\src\\oracle-wallet")))
+SSL_SERVER_DN_MATCH=yes
