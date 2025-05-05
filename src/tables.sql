@@ -19,6 +19,9 @@ create table loans (
   user_uuid varchar(30),
   loan_type varchar(30),
   loan_uuid varchar(30),
+  loan_amount numeric(10,2),
+  start_date date,
+  end_date date,
   primary key (loan_uuid),
   foreign key (user_uuid) references users
 );
@@ -29,12 +32,9 @@ create table mortgage_loans (
   house_area varchar(30),
   number_bedrooms numeric(2,0),
   house_price numeric(10,2),
-  loan_amount numeric(10,2),
   interest_rate numeric(6,2),
   amount_paid numeric(10,2),
-  start_date date,
   number_payments numeric(3,0),
-  end_date date,
   primary key (loan_uuid)
 );
 
@@ -44,24 +44,18 @@ create table auto_loans (
   model varchar(30),
   year number(4),
   vin varchar(17) unique,
-  loan_amount numeric(10,2),
   interest_rate numeric(6,2),
   amount_paid numeric(10,2),
-  start_date date,
   number_payments numeric(3,0),
-  end_date date,
   primary key (loan_uuid)
 );
 
 create table personal_loans (
   loan_uuid varchar(30),
   loan_purpose varchar(100),
-  loan_amount numeric(10,2),
   interest_rate numeric(6,2),
   amount_paid numeric(10,2),
-  start_date date,
   number_payments numeric(3,0),
-  end_date date,
   primary key (loan_uuid)
 );
 
@@ -69,8 +63,6 @@ create table student_loans (
   loan_uuid varchar(30),
   loan_term number(2),
   disbursement_date date,
-  repayment_start_date date,
-  repayment_end_date date,
   monthly_payment numeric(10,2),
   grace_period number(3),
   loan_type varchar(50),
