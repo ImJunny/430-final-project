@@ -1,15 +1,75 @@
-create table user (
-    uuid default gen_random_uuid() primary key,
-    first_name varchar2(30) not null,
-    last_name varchar2(30) not null,
-    email varchar2(30) not null unique,
-    password varchar2(50) not null,
-    role varchar2(10) check (role in ('user', 'admin'))
+drop table loans;
+drop table mortgage_loans;
+drop table auto_loans;
+drop table personal_loans;
+drop table student_loans;
+drop table users;
+
+create table users (
+  user_uuid varchar(30),
+  email varchar(40),
+  first_name varchar(30),
+  last_name varchar(30),
+  primary key (user_uuid)
 );
 
-create table loan (
-    uuid default gen_random_uuid() primary key,
-    user_id uuid references user(uuid) on delete cascade,
-    loan_date date not null,
-    return_date date
-)
+create table loans (
+  user_uuid varchar(30),
+  loan_uuid varchar(30),
+  primary key (loan_uuid),
+  foreign key (user_uuid) references users
+);
+
+create table mortgage_loans (
+  loan_uuid varchar(30),
+  house_address varchar(40),
+  house_area varchar(30),
+  number_bedrooms numeric(2,0),
+  house_price numeric(10,2),
+  loan_amount numeric(10,2),
+  interest_rate numeric(6,2),
+  amount_paid numeric(10,2),
+  start_date date,
+  number_payments numeric(3,0),
+  end_date date,
+  primary key (loan_uuid)
+);
+
+create table auto_loans (
+  loan_uuid varchar(30),
+  make varchar(30),
+  model varchar(30),
+  year number(4),
+  vin varchar(17) unique,
+  loan_amount numeric(10,2),
+  interest_rate numeric(6,2),
+  amount_paid numeric(10,2),
+  start_date date,
+  number_payments numeric(3,0),
+  end_date date,
+  primary key (loan_uuid)
+);
+
+create table personal_loans (
+  loan_uuid varchar(30),
+  loan_purpose varchar(100),
+  loan_amount numeric(10,2),
+  interest_rate numeric(6,2),
+  amount_paid numeric(10,2),
+  start_date date,
+  number_payments numeric(3,0),
+  end_date date,
+  primary key (loan_uuid)
+);
+
+create table student_loans (
+  loan_uuid varchar(30),
+  loan_term number(2),
+  disbursement_date date,
+  repayment_start_date date,
+  repayment_end_date date,
+  monthly_payment numeric(10,2),
+  grace_period number(3),
+  loan_type varchar(50),
+  primary key (loan_uuid)
+);
