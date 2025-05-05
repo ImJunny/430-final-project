@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Dispatch, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "@/lib/axiosClient";
@@ -22,11 +22,15 @@ export default function Home() {
   const [formVisible, setFormVisible] = useState(false);
 
   const fetchLoans = async () => {
-    const response = await api.get("/getLoans");
+    const user_uuid = localStorage.getItem("430_user_uuid");
+    const response = await api.get(`/getLoans?user_uuid=${user_uuid}`);
     return response.data;
   };
 
-  const { data, isLoading, isError } = useQuery("loans", fetchLoans);
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["loans"],
+    queryFn: fetchLoans,
+  });
 
   useEffect(() => {
     if (isLoading) {
@@ -35,12 +39,14 @@ export default function Home() {
       console.error("Error fetching loans");
     } else {
       console.log("Loans fetched successfully:", data);
+      setLoans(data);
     }
   }, [isLoading, isError]);
 
   const navigate = useNavigate();
   const handleSignout = () => {
     navigate("/");
+    localStorage.removeItem("430_user_uuid");
   };
 
   const showForm = () => {
@@ -61,7 +67,17 @@ export default function Home() {
                 Sign out
               </p>
             </div>
-            <p className="text-sm py-6 text-center">No loans yet</p>
+            {loans.length > 0 ? (
+              <div>
+                {loans.map((loan: any) => (
+                  <p key={loan.loan_uuid} className="text-sm py-2">
+                    {loan.loan_uuid}
+                  </p>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm py-6 text-center">No loans yet</p>
+            )}
 
             <Button className="w-full" variant="outline" onClick={showForm}>
               Request a loan
@@ -84,13 +100,15 @@ function LoanForm({
     loan_type: z.enum(["mortgage", "auto", "personal", "student"]),
   });
 
-  const { control, handleSubmit, formState, setValue, trigger } = useForm({
-    resolver: zodResolver(schema),
-  });
+  const { control, handleSubmit, formState, setValue, trigger, getValues } =
+    useForm({
+      resolver: zodResolver(schema),
+    });
 
   const [loading, setLoading] = useState(false);
   const onSubmit = () => {
     setLoading(true);
+
     setTimeout(() => {
       console.log("Loan request submitted");
       setLoading(false);

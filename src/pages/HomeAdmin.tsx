@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Dispatch, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "@/lib/axiosClient";
@@ -26,17 +26,17 @@ export default function HomeAdmin() {
     return response.data;
   };
 
-  const { data, isLoading, isError } = useQuery("loans", fetchLoans);
+  // const { data, isLoading, isError } = useQuery("loans", fetchLoans);
 
-  useEffect(() => {
-    if (isLoading) {
-      console.log("Loading loans...");
-    } else if (isError) {
-      console.error("Error fetching loans");
-    } else {
-      console.log("Loans fetched successfully:", data);
-    }
-  }, [isLoading, isError]);
+  // useEffect(() => {
+  //   if (isLoading) {
+  //     console.log("Loading loans...");
+  //   } else if (isError) {
+  //     console.error("Error fetching loans");
+  //   } else {
+  //     console.log("Loans fetched successfully:", data);
+  //   }
+  // }, [isLoading, isError]);
 
   const navigate = useNavigate();
   const handleSignout = () => {

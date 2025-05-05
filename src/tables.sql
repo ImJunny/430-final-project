@@ -10,6 +10,8 @@ create table users (
   email varchar(40),
   first_name varchar(30),
   last_name varchar(30),
+  pass varchar(30),
+  role varchar(10),
   primary key (user_uuid)
 );
 

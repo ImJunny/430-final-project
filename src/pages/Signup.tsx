@@ -11,7 +11,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/axiosClient";
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
   const schema = z
@@ -28,17 +30,36 @@ export default function Signup() {
       path: ["confirm_password"],
     });
 
-  const { control, handleSubmit, formState, trigger, setValue } = useForm({
-    resolver: zodResolver(schema),
+  const { control, handleSubmit, formState, trigger, setValue, getValues } =
+    useForm({
+      resolver: zodResolver(schema),
+    });
+
+  const navigate = useNavigate();
+  const signupMutation = useMutation({
+    mutationFn: async () => {
+      const response = await api.post("/signup", {
+        email: getValues("email"),
+        first_name: getValues("first_name"),
+        last_name: getValues("last_name"),
+        password: getValues("password"),
+        role: getValues("role"),
+      });
+      return response.data;
+    },
   });
 
-  const [loading, setLoading] = useState(false);
-  const onSubmit = () => {
-    setLoading(true);
-    setTimeout(() => {
-      console.log("Loan request submitted");
-      setLoading(false);
-    }, 2000);
+  const handleSignup = () => {
+    signupMutation.mutate(undefined, {
+      onSuccess: (response) => {
+        console.log("Sign up successful:", response);
+        localStorage.setItem("430_user_uuid", response.user_uuid);
+        response.role === "user" ? navigate("/home") : navigate("/home-admin");
+      },
+      onError: () => {
+        alert("Sign up failed.");
+      },
+    });
   };
 
   return (
@@ -90,7 +111,7 @@ export default function Signup() {
           </div>
           <div>
             <Select
-              disabled={loading}
+              disabled={signupMutation.isPending}
               onValueChange={(value: "user" | "admin") => {
                 setValue("role", value);
                 trigger("role");
@@ -108,7 +129,7 @@ export default function Signup() {
               {formState.errors.role?.message}
             </p>
           </div>
-          <Button className="w-full" onClick={handleSubmit(onSubmit)}>
+          <Button className="w-full" onClick={handleSubmit(handleSignup)}>
             Sign up
           </Button>
 
