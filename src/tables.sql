@@ -17,6 +17,7 @@ create table users (
 
 create table loans (
   user_uuid varchar(30),
+  loan_status varchar(30),
   loan_type varchar(30),
   loan_uuid varchar(30),
   loan_amount numeric(10,2),
